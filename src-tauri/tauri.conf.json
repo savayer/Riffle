@@ -1,0 +1,164 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Riffle",
+  "version": "0.1.0",
+  "identifier": "dev.riffle.viewer",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Riffle",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 400,
+        "minHeight": 300,
+        "center": true,
+        "backgroundColor": "#000000",
+        "theme": "Dark"
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self'",
+        "img-src": "'self' asset: http://asset.localhost blob: data:",
+        "media-src": "'self' asset: http://asset.localhost",
+        "connect-src": "ipc: http://ipc.localhost",
+        "style-src": "'self' 'unsafe-inline'"
+      },
+      "assetProtocol": {
+        "enable": true,
+        "scope": []
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "app"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "jpg",
+          "jpeg"
+        ],
+        "contentTypes": [
+          "public.jpeg"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "png"
+        ],
+        "contentTypes": [
+          "public.png"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "gif"
+        ],
+        "contentTypes": [
+          "com.compuserve.gif"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "webp"
+        ],
+        "contentTypes": [
+          "org.webmproject.webp"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "heic"
+        ],
+        "contentTypes": [
+          "public.heic"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "heif"
+        ],
+        "contentTypes": [
+          "public.heif"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "bmp"
+        ],
+        "contentTypes": [
+          "com.microsoft.bmp"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "tiff"
+        ],
+        "contentTypes": [
+          "public.tiff"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "mp4"
+        ],
+        "contentTypes": [
+          "public.mpeg-4"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "mov"
+        ],
+        "contentTypes": [
+          "com.apple.quicktime-movie"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "m4v"
+        ],
+        "contentTypes": [
+          "com.apple.m4v-video"
+        ],
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "webm"
+        ],
+        "contentTypes": [
+          "org.webmproject.webm"
+        ],
+        "role": "Viewer"
+      }
+    ]
+  }
+}
