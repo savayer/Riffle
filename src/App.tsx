@@ -5,7 +5,9 @@ import { getCurrentWebview } from "@tauri-apps/api/webview";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
 import EmptyScreen from "./EmptyScreen";
+import NavArrows from "./NavArrows";
 import Viewer from "./Viewer";
+import { t } from "./i18n";
 import { fileName, MEDIA_EXTS } from "./media";
 import { navigate } from "./nav";
 import { createSwipe } from "./swipe";
@@ -41,11 +43,16 @@ export default function App() {
     return true;
   }
 
+  function reveal() {
+    const { files, index } = listRef.current;
+    if (files[index]) invoke("reveal_in_finder", { path: files[index] });
+  }
+
   async function pickFile() {
     const path = await open({
       multiple: false,
       directory: false,
-      filters: [{ name: "Медиа", extensions: MEDIA_EXTS }],
+      filters: [{ name: t.media, extensions: MEDIA_EXTS }],
     });
     if (path) openPath(path);
   }
@@ -65,7 +72,10 @@ export default function App() {
       });
 
     const onKey = (e: KeyboardEvent) => {
-      if (go(e.key)) {
+      if (e.metaKey && e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        reveal();
+      } else if (go(e.key)) {
         e.preventDefault();
         e.stopPropagation(); // keep arrows away from <video> seeking
       }
@@ -81,10 +91,26 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    // the native context menu offers "Show in Finder" only while a file is shown
+    invoke("set_current_file", { path: current ?? null });
+  }, [current]);
+
+  useEffect(() => {
     getCurrentWindow().setTitle(
       current ? `${fileName(current)} — ${index + 1} / ${files.length}` : "Riffle",
     );
   }, [current, index, files.length]);
 
-  return current ? <Viewer files={files} index={index} /> : <EmptyScreen onOpen={pickFile} />;
+  if (!current) return <EmptyScreen onOpen={pickFile} />;
+  return (
+    <>
+      <Viewer files={files} index={index} />
+      <NavArrows
+        canPrev={index > 0}
+        canNext={index < files.length - 1}
+        onPrev={() => go("ArrowLeft")}
+        onNext={() => go("ArrowRight")}
+      />
+    </>
+  );
 }

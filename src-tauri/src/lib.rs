@@ -1,3 +1,5 @@
+#[cfg(target_os = "macos")]
+mod context_menu;
 mod media;
 
 use std::path::{Path, PathBuf};
@@ -51,6 +53,32 @@ async fn list_media(app: AppHandle, path: String) -> Result<MediaList, String> {
     })
 }
 
+/// Selects the file in a Finder window (`open -R`).
+fn reveal(path: &str) -> Result<(), String> {
+    let status = std::process::Command::new("open")
+        .arg("-R")
+        .arg(path)
+        .status()
+        .map_err(|e| e.to_string())?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(format!("open -R failed: {status}"))
+    }
+}
+
+#[tauri::command]
+async fn reveal_in_finder(path: String) -> Result<(), String> {
+    reveal(&path)
+}
+
+/// The file on screen, for the native context menu's "Show in Finder".
+#[tauri::command]
+fn set_current_file(path: Option<String>) {
+    #[cfg(target_os = "macos")]
+    context_menu::set_current(path);
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -67,9 +95,18 @@ pub fn run() {
             if initial.is_none() {
                 *initial = arg.map(PathBuf::from);
             }
+            #[cfg(target_os = "macos")]
+            if let Some(w) = app.get_webview_window("main") {
+                let _ = w.with_webview(|wv| context_menu::install(wv.inner()));
+            }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_initial_file, list_media])
+        .invoke_handler(tauri::generate_handler![
+            get_initial_file,
+            list_media,
+            reveal_in_finder,
+            set_current_file
+        ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {

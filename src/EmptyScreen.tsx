@@ -1,8 +1,10 @@
+import { t } from "./i18n";
+
 export default function EmptyScreen({ onOpen }: { onOpen: () => void }) {
   return (
     <div className="empty">
-      <button onClick={onOpen}>Открыть…</button>
-      <p>или перетащите файл в окно</p>
+      <button onClick={onOpen}>{t.open}</button>
+      <p>{t.dropHint}</p>
     </div>
   );
 }

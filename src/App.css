@@ -64,3 +64,39 @@ body,
 .empty button:hover {
   background: #353535;
 }
+
+.nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(60, 60, 60, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.3s;
+}
+
+.nav:hover {
+  background: rgba(80, 80, 80, 0.8);
+}
+
+.nav.prev {
+  left: 16px;
+}
+
+.nav.next {
+  right: 16px;
+}
+
+.nav.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
