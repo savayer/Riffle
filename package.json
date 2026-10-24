@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test": "node --test \"src/**/*.test.ts\""
+    "test": "node --test \"src/**/*.test.ts\"",
+    "build:release": "set -a && . ./.env.local && set +a && CI=true tauri build --target universal-apple-darwin --bundles dmg && DMG=$(ls -t src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg | head -1) && xcrun notarytool submit \"$DMG\" --key \"$APPLE_API_KEY_PATH\" --key-id \"$APPLE_API_KEY\" --issuer \"$APPLE_API_ISSUER\" --wait && xcrun stapler staple \"$DMG\""
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

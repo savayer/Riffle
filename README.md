@@ -8,8 +8,7 @@ Built with Tauri 2 (Rust) and React + TypeScript. The app is ~4 MB; the interfac
 ## Download
 
 Get the latest `.dmg` from [Releases](https://github.com/savayer/Riffle/releases/latest) (universal: Apple Silicon and Intel),
-open it and drag Riffle to Applications. The build is not notarized yet, so the first launch needs one extra step
-— see [Unsigned build](#build-and-install) below.
+open it and drag Riffle to Applications. Releases are signed with a Developer ID and notarized by Apple.
 
 ## Features
 
@@ -57,9 +56,20 @@ CI=true npm run tauri build -- --bundles dmg
 `CI=true` skips the Finder AppleScript that only lays out the DMG window, which fails without
 Automation permission.
 
-> **Unsigned build.** The app is ad-hoc signed, not notarized. An app you build yourself opens normally.
-> A copy downloaded from elsewhere is blocked by Gatekeeper: allow it in System Settings → Privacy &
-> Security → "Open Anyway", or run `xattr -dr com.apple.quarantine /Applications/Riffle.app`.
+A local build is ad-hoc signed: fine on your own Mac, but a copy sent elsewhere is blocked by Gatekeeper.
+
+### Release (signed + notarized)
+
+Requires a Developer ID Application certificate in the keychain and an App Store Connect API key
+(Users and Access → Integrations → Team Keys, access: Developer).
+
+```bash
+cp .env.example .env.local   # fill in; .env.local is gitignored
+npm run build:release        # universal DMG, signed, app + DMG notarized and stapled
+gh release create v<version> src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+```
+
+The first notarization with a new certificate can take up to an hour; later ones take minutes.
 
 ### Make Riffle the default viewer
 
